@@ -1,17 +1,13 @@
 from datetime import timedelta, datetime
 import sys
-#from PySide2.QtWidgets import QApplication, QPushButton
 from PyQt5.QtWidgets import (QWidget, QLabel, QTextEdit, QGridLayout, QApplication, QPushButton, QDesktopWidget)
-#from PySide2.QtCore import Slot
 import psycopg2
 
 conn = psycopg2.connect(dbname='postgres', user='user', host="192.168.0.103", password = "user")
 cursor = conn.cursor()
 
 
-
 class Book:
-
     def __init__(self, id, name, author, year, publ, whos = 0, date = datetime(2000, 1, 1) ):
         self.id = id
         self.name = name
@@ -97,9 +93,9 @@ def return_book(mas_book, mas_user,  id_book, id_user):
             book.date = datetime(2000, 1, 1)
             user.books_now = 0
             user.id_book = 0
-            cursor.execute("update book set whos = 0, date = %s,  where id = %s", (book.date, book.id)) #здесь что-то не работает
-            cursor.execute("update users set id_book = 0, books_now = 0, where id = %s", (user.id)) #здесь что-то не работает
-            cursor.commit()
+            cursor.execute("update book set whos = 0, date = %(date)s  where id = %(id)s", {'date':book.date, 'id': book.id})
+            cursor.execute("update users set id_book = 0, books_now = 0 where id = %(id)s", {'id': user.id}) #здесь что-то не работает
+            conn.commit()
             str1 = f"\n Пользователь с id {id_user} вернул книгу {book.name} автора {book.author}"
             return str1
         else:
@@ -149,41 +145,14 @@ for record in users:
                     record[5])
     print(tempUser)
     Usermas.append(tempUser)
-
-# data = datetime(2020, 1, 1)
-# book1 = Book(1, 'Над пропастью во ржи','Cэлинжер', 1980, "Эксмо")
-# book2 = Book(2, 'Над пропастью во ржи','Cэлинжер', 1980, "Эксмо")
-# mas_book  = [book1, book2]
-# user1 = User('Ковалев', data)
-# user2 = User('Иванов', data)
-# mas_user = [user1, user2]
-
-# print('User1: ')
-# print(user1)
-# bring_book(mas_book, mas_user, 2, 2)
-# print('User2: ')
-# print(user2)
-
 print(list_of_debtors(Bookmas, Usermas))
 print()
 
-
-# @Slot()
-# def print_list_of_debtors():
-#     list_of_debtors(mas_book, mas_user)
-#
-# app = QApplication(sys.argv)
-# button = QPushButton("Click me")
-#
-# button.clicked.connect(print_list_of_debtors)
-#
-# button.show()
-# app.exec_()
-
-
-
-
 class Example(QWidget):
+
+    def templateAction(self, userId, bookId):
+        self.textEdit2.insertPlainText(str(userId))
+        self.textEdit3.insertPlainText(str(bookId))
 
     def __init__(self):
         super().__init__()
@@ -223,7 +192,7 @@ class Example(QWidget):
         grid.addWidget(label3, 3, 2, 1, 1)
         grid.addWidget(self.textEdit3, 4, 2, 1, 1)
         grid.addWidget(btn5, 5, 2)
-
+        self.templateAction(1, 1)
 
         self.setLayout(grid)
         x = QDesktopWidget().availableGeometry().center().x()
