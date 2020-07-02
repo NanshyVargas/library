@@ -98,7 +98,7 @@ def return_book(mas_book, mas_user,  id_book, id_user):
             user.books_now = 0
             user.id_book = 0
             cursor.execute("update book set whos = 0, date = %s,  where id = %s", (book.date, book.id))
-            cursor.execute("update users set id_book = 0, books_now = 0, where id = user.id", (user.id))
+            cursor.execute("update users set id_book = 0, books_now = 0, where id = %s", (user.id))
             cursor.commit()
             str1 = f"\n Пользователь с id {id_user} вернул книгу {book.name} автора {book.author}"
             return str1
