@@ -77,6 +77,7 @@ def bring_book(mas_book, mas_user,  id_book, id_user):
             cursor.execute("update book set date = %s, whos = %s where id = %s", (book.date,book.whos, book.id))
             cursor.execute("update users set id_book = %s, books_now = %s, books_alltime = %s where id = %s", (book.id, user.books_now, user.books_alltime, user.id))
             str1  = f"\n Пользователь с id {id_user} взял книгу {book.name} автора {book.author}"
+            cursor.execute("insert into events (operation_id, logs) values (1, %(log)s)", {'log':str1})
             conn.commit()
             return str1
         else:
@@ -95,8 +96,9 @@ def return_book(mas_book, mas_user,  id_book, id_user):
             user.id_book = 0
             cursor.execute("update book set whos = 0, date = %(date)s  where id = %(id)s", {'date':book.date, 'id': book.id})
             cursor.execute("update users set id_book = 0, books_now = 0 where id = %(id)s", {'id': user.id})
-            conn.commit()
             str1 = f"\n Пользователь с id {id_user} вернул книгу {book.name} автора {book.author}"
+            cursor.execute("insert into events (operation_id, logs) values (2, %(log)s)", {'log': str1})
+            conn.commit()
             return str1
         else:
             str1 = f"\n У пользователя с данным id {id_user} нет на руках книги {book.name} автора {book.author}"
