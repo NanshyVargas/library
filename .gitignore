@@ -33,3 +33,4 @@ _ReSharper*/
 packages/
 /Scripts/
 /pyvenv.cfg
+/__pycache__/proto1.cpython-37.pyc
